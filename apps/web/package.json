@@ -1,0 +1,33 @@
+{
+  "name": "@aspect/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run"
+  },
+  "dependencies": {
+    "@aspect/shared": "workspace:*",
+    "motion": "11.15.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "zustand": "5.0.2"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.1.0",
+    "@types/react": "19.0.1",
+    "@types/react-dom": "19.0.2",
+    "@vitejs/plugin-react": "4.3.4",
+    "jsdom": "25.0.1",
+    "typescript": "5.7.2",
+    "vite": "6.0.3",
+    "vite-plugin-pwa": "0.21.1",
+    "vitest": "3.0.5"
+  }
+}

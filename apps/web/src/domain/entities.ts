@@ -95,5 +95,5 @@ export function formatState(entity: EntityState): string {
     return typeof unit === 'string' ? `${entity.state} ${unit}` : entity.state;
   }
 
-  return capitalize(entity.state);
+  return capitalize(entity.state.replace(/_/g, ' '));
 }

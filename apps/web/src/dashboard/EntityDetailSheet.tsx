@@ -1,11 +1,11 @@
 import type { ReactElement } from 'react';
 import type { EntityState } from '@aspect/shared';
 import { Sheet } from '../ui/Sheet.js';
-import { formatState } from '../domain/entities.js';
-import type { RoomEntity } from './rooms.js';
+import { useConnectionStore } from '../store/connectionStore.js';
+import { friendlyName, formatState } from '../domain/entities.js';
 
 export interface EntityDetailSheetProps {
-  roomEntity: RoomEntity | null;
+  entityId: string | null;
   onClose: () => void;
 }
 
@@ -15,20 +15,26 @@ export interface EntityDetailSheetProps {
  * current state + attributes.
  */
 export function EntityDetailSheet({
-  roomEntity,
+  entityId,
   onClose,
 }: EntityDetailSheetProps): ReactElement {
+  const entity = useConnectionStore((s) => (entityId ? s.entities[entityId] : undefined));
+  const registryName = useConnectionStore((s) =>
+    entityId ? (s.registry.find((r) => r.entityId === entityId)?.name ?? null) : null,
+  );
+  const name = entity ? friendlyName(entity, registryName) : '';
+
   return (
-    <Sheet open={roomEntity !== null} onClose={onClose} title={roomEntity?.name ?? ''}>
-      {roomEntity && (
+    <Sheet open={entity != null} onClose={onClose} title={name}>
+      {entity && (
         <div style={{ display: 'grid', gap: 16 }}>
           <p style={{ margin: 0, fontSize: 15, color: 'var(--muted)' }}>
-            {formatState(roomEntity.entity)}
+            {formatState(entity)}
           </p>
           <p style={{ margin: 0, fontSize: 13, color: 'var(--muted)' }}>
             Controls are coming soon.
           </p>
-          <AttributeList entity={roomEntity.entity} />
+          <AttributeList entity={entity} />
         </div>
       )}
     </Sheet>

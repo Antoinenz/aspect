@@ -47,7 +47,7 @@ export function Tile({ icon, name, state, active, onPress }: TileProps): ReactEl
         {icon}
       </span>
       <span style={{ display: 'block', fontSize: 13.5, fontWeight: 600 }}>{name}</span>
-      <span style={{ display: 'block', fontSize: 11.5, marginTop: 3, opacity: 0.65 }}>
+      <span style={{ display: 'block', fontSize: 11.5, marginTop: 3, opacity: 0.8 }}>
         {state}
       </span>
     </motion.button>

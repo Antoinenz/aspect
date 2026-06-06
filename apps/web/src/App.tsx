@@ -15,11 +15,13 @@ export function App(): ReactElement {
   const badge =
     link !== 'connected'
       ? 'Connecting…'
-      : serverStatus === 'online' && !haConnected
-        ? 'Home Assistant offline'
-        : serverStatus === 'degraded'
-          ? 'Reconnecting…'
-          : null;
+      : serverStatus === null
+        ? 'Connecting…'
+        : serverStatus === 'online' && !haConnected
+          ? 'Home Assistant offline'
+          : serverStatus === 'degraded'
+            ? 'Reconnecting…'
+            : null;
 
   return (
     <>
@@ -27,6 +29,7 @@ export function App(): ReactElement {
       <AnimatePresence>
         {!healthy && badge && (
           <motion.div
+            key={badge}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 12 }}

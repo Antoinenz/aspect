@@ -1,4 +1,4 @@
-import { useEffect, type ReactElement, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactElement, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export interface SheetProps {
@@ -13,14 +13,25 @@ export interface SheetProps {
  * surface. Closes on backdrop click or Escape. Content is unmounted when closed.
  */
 export function Sheet({ open, onClose, title, children }: SheetProps): ReactElement {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (!open) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     const onKey = (ev: KeyboardEvent): void => {
       if (ev.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
   }, [open, onClose]);
+
+  useEffect(() => {
+    if (open) dialogRef.current?.focus();
+  }, [open]);
 
   return (
     <AnimatePresence>
@@ -43,8 +54,11 @@ export function Sheet({ open, onClose, title, children }: SheetProps): ReactElem
           }}
         >
           <motion.div
+            ref={dialogRef}
             role="dialog"
             aria-label={title}
+            aria-modal="true"
+            tabIndex={-1}
             onClick={(ev) => ev.stopPropagation()}
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
@@ -60,6 +74,7 @@ export function Sheet({ open, onClose, title, children }: SheetProps): ReactElem
               borderTopRightRadius: 'var(--radius-card)',
               border: '1px solid var(--border)',
               padding: '20px 20px calc(20px + env(safe-area-inset-bottom))',
+              outline: 'none',
             }}
           >
             <div

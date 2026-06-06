@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactElement } from 'react';
+import { useCallback, useMemo, useState, type ReactElement } from 'react';
 import { useConnectionStore } from '../store/connectionStore.js';
 import { buildRooms, type RoomEntity } from './rooms.js';
 import { RoomSection } from './RoomSection.js';
@@ -15,7 +15,9 @@ export function Dashboard(): ReactElement {
     [entities, areas, devices, registry],
   );
 
-  const [selected, setSelected] = useState<RoomEntity | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const closeSheet = useCallback(() => setSelectedId(null), []);
+  const handleSelect = useCallback((re: RoomEntity) => setSelectedId(re.entity.entityId), []);
 
   return (
     <main
@@ -38,11 +40,11 @@ export function Dashboard(): ReactElement {
         </p>
       ) : (
         rooms.map((room) => (
-          <RoomSection key={room.areaId} room={room} onSelect={setSelected} />
+          <RoomSection key={room.areaId} room={room} onSelect={handleSelect} />
         ))
       )}
 
-      <EntityDetailSheet roomEntity={selected} onClose={() => setSelected(null)} />
+      <EntityDetailSheet entityId={selectedId} onClose={closeSheet} />
     </main>
   );
 }

@@ -75,4 +75,7 @@ describe('formatState', () => {
   it('shows a friendly label for unavailable', () => {
     expect(formatState(e('light.x', 'unavailable'))).toBe('Unavailable');
   });
+  it('replaces underscores with spaces in the fallback', () => {
+    expect(formatState(e('climate.hvac', 'heat_cool'))).toBe('Heat cool');
+  });
 });

@@ -4,6 +4,8 @@ import {
   createSnapshotMessage,
   createEntityUpdateMessage,
   isServerToClientMessage,
+  createCallServiceMessage,
+  isClientToServerMessage,
   type StatusMessage,
 } from './messages.js';
 import type { EntityState } from './entities.js';
@@ -84,5 +86,33 @@ describe('isServerToClientMessage', () => {
         ts: Date.now(),
       }),
     ).toBe(false);
+  });
+});
+
+describe('createCallServiceMessage / isClientToServerMessage', () => {
+  it('builds a call_service message with optional data', () => {
+    const msg = createCallServiceMessage('light', 'turn_on', 'light.k', {
+      brightness_pct: 50,
+    });
+    expect(msg).toEqual({
+      type: 'call_service',
+      domain: 'light',
+      service: 'turn_on',
+      entityId: 'light.k',
+      data: { brightness_pct: 50 },
+    });
+    expect(isClientToServerMessage(msg)).toBe(true);
+  });
+
+  it('omits data when not provided', () => {
+    const msg = createCallServiceMessage('switch', 'toggle', 'switch.x');
+    expect('data' in msg).toBe(false);
+    expect(isClientToServerMessage(msg)).toBe(true);
+  });
+
+  it('rejects malformed client messages', () => {
+    expect(isClientToServerMessage({ type: 'call_service', domain: 'light' })).toBe(false);
+    expect(isClientToServerMessage({ type: 'nope' })).toBe(false);
+    expect(isClientToServerMessage(null)).toBe(false);
   });
 });

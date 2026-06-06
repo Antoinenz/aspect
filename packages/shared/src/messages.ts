@@ -55,8 +55,47 @@ export interface HelloMessage {
   clientId: string;
 }
 
+/** Asks the server to call a Home Assistant service on one entity. */
+export interface CallServiceMessage {
+  type: 'call_service';
+  domain: string;
+  service: string;
+  entityId: string;
+  data?: Record<string, unknown>;
+}
+
 /** Union of every message a client can send to the server. */
-export type ClientToServerMessage = HelloMessage;
+export type ClientToServerMessage = HelloMessage | CallServiceMessage;
+
+export function createCallServiceMessage(
+  domain: string,
+  service: string,
+  entityId: string,
+  data?: Record<string, unknown>,
+): CallServiceMessage {
+  return { type: 'call_service', domain, service, entityId, ...(data ? { data } : {}) };
+}
+
+export function isClientToServerMessage(
+  value: unknown,
+): value is ClientToServerMessage {
+  if (typeof value !== 'object' || value === null) return false;
+  const c = value as Record<string, unknown>;
+  switch (c.type) {
+    case 'hello':
+      return typeof c.clientId === 'string';
+    case 'call_service':
+      return (
+        typeof c.domain === 'string' &&
+        typeof c.service === 'string' &&
+        typeof c.entityId === 'string' &&
+        (c.data === undefined ||
+          (typeof c.data === 'object' && c.data !== null))
+      );
+    default:
+      return false;
+  }
+}
 
 export function createStatusMessage(
   status: ServerStatus,

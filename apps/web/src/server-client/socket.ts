@@ -1,8 +1,11 @@
+import type { ClientToServerMessage } from '@aspect/shared';
 import { handleRawMessage } from './messageHandler.js';
 import { useConnectionStore } from '../store/connectionStore.js';
 
 const INITIAL_BACKOFF_MS = 500;
 const MAX_BACKOFF_MS = 10_000;
+
+let activeSocket: WebSocket | null = null;
 
 /**
  * Maintains a resilient WebSocket to the Aspect server. Reconnects with
@@ -19,6 +22,7 @@ export function connectToServer(url?: string): () => void {
   const open = (): void => {
     useConnectionStore.getState().setLink('connecting');
     socket = new WebSocket(target);
+    activeSocket = socket;
 
     socket.onopen = () => {
       backoff = INITIAL_BACKOFF_MS;
@@ -26,6 +30,7 @@ export function connectToServer(url?: string): () => void {
     };
     socket.onmessage = (event) => handleRawMessage(String(event.data));
     socket.onclose = () => {
+      if (activeSocket === socket) activeSocket = null;
       useConnectionStore.getState().setLink('disconnected');
       if (!disposed) scheduleReconnect();
     };
@@ -49,4 +54,13 @@ export function connectToServer(url?: string): () => void {
 function defaultUrl(): string {
   const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
   return `${proto}://${window.location.host}/ws`;
+}
+
+/** Sends a message to the Aspect server if the socket is open. Returns success. */
+export function sendToServer(msg: ClientToServerMessage): boolean {
+  if (activeSocket && activeSocket.readyState === WebSocket.OPEN) {
+    activeSocket.send(JSON.stringify(msg));
+    return true;
+  }
+  return false;
 }

@@ -27,6 +27,10 @@ interface ConnectionState {
     registry: RegistryEntry[];
   }) => void;
   applyEntityUpdate: (entities: EntityState[], removed: string[]) => void;
+  applyOptimistic: (
+    entityId: string,
+    patch: { state?: string; attributes?: Record<string, unknown> },
+  ) => void;
 }
 
 export const useConnectionStore = create<ConnectionState>((set) => ({
@@ -54,5 +58,20 @@ export const useConnectionStore = create<ConnectionState>((set) => ({
       for (const e of entities) next[e.entityId] = e;
       for (const id of removed) delete next[id];
       return { entities: next };
+    }),
+  applyOptimistic: (entityId, patch) =>
+    set((s) => {
+      const current = s.entities[entityId];
+      if (!current) return {};
+      return {
+        entities: {
+          ...s.entities,
+          [entityId]: {
+            ...current,
+            ...(patch.state !== undefined ? { state: patch.state } : {}),
+            attributes: { ...current.attributes, ...(patch.attributes ?? {}) },
+          },
+        },
+      };
     }),
 }));

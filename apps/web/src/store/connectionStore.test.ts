@@ -65,4 +65,25 @@ describe('connectionStore', () => {
     useConnectionStore.getState().applyEntityUpdate([], ['light.a']);
     expect(useConnectionStore.getState().entities['light.a']).toBeUndefined();
   });
+
+  it('applies an optimistic patch over the current entity', () => {
+    useConnectionStore.getState().applySnapshot({
+      entities: [entity('light.a', 'off')],
+      areas: [],
+      devices: [],
+      registry: [],
+    });
+    useConnectionStore.getState().applyOptimistic('light.a', {
+      state: 'on',
+      attributes: { brightness: 128 },
+    });
+    const got = useConnectionStore.getState().entities['light.a'];
+    expect(got?.state).toBe('on');
+    expect(got?.attributes.brightness).toBe(128);
+  });
+
+  it('ignores optimistic patches for unknown entities', () => {
+    useConnectionStore.getState().applyOptimistic('light.ghost', { state: 'on' });
+    expect(useConnectionStore.getState().entities['light.ghost']).toBeUndefined();
+  });
 });

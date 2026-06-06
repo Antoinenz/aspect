@@ -11,12 +11,15 @@ async function main(): Promise<void> {
 
   if (config.haUrl && config.haToken) {
     try {
-      await startHaConnection({
+      const ha = await startHaConnection({
         url: config.haUrl,
         token: config.haToken,
         cache: app.haCache,
         hub: app.clientHub,
       });
+      // Stop the HA socket when the server shuts down so it doesn't keep
+      // reconnecting headlessly after the process is asked to stop.
+      app.addHook('onClose', async () => ha.stop());
       // eslint-disable-next-line no-console
       console.log(`Connected to Home Assistant at ${config.haUrl}`);
     } catch (err) {

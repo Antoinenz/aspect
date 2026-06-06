@@ -45,15 +45,9 @@ export async function startHaConnection(
   const auth = createLongLivedTokenAuth(url, token);
   const connection = await createConnection({ auth });
 
-  connection.addEventListener('ready', () => {
-    void loadEverything(connection, cache, hub);
-  });
-  connection.addEventListener('disconnected', () => {
-    hub.setStatus('degraded', false);
-  });
-
-  await loadEverything(connection, cache, hub);
-
+  // Establish subscriptions BEFORE the initial load so live updates always flow
+  // even if a load fails. home-assistant-js-websocket automatically re-creates
+  // these subscriptions across reconnects, so they are set up exactly once here.
   await connection.subscribeEvents((event: { data: StateChangedData }) => {
     handleStateChanged(event.data, cache, hub);
   }, 'state_changed');
@@ -66,6 +60,25 @@ export async function startHaConnection(
     await connection.subscribeEvents(() => {
       void refreshRegistries(connection, cache, hub);
     }, evt);
+  }
+
+  // Reload the full world on every (re)connection. The library fires `ready`
+  // on reconnect (not on the initial connect, which already happened above).
+  connection.addEventListener('ready', () => {
+    void loadEverything(connection, cache, hub);
+  });
+  connection.addEventListener('disconnected', () => {
+    hub.setStatus('degraded', false);
+  });
+
+  // A failed initial load leaves us connected but degraded; the next `ready`
+  // retries it. We still return a handle so the caller can shut the socket down.
+  // (Note: deltas arriving during a reload's in-flight fetch can be briefly
+  // overwritten by the snapshot; they self-heal on the next state change.)
+  try {
+    await loadEverything(connection, cache, hub);
+  } catch {
+    hub.setStatus('degraded', false);
   }
 
   return {

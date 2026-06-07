@@ -1,63 +1,40 @@
-:root {
-  --bg: #16161a;
-  --surface: #1f1f25;
-  --border: #2a2a31;
-  --text: #f3f3f5;
-  --muted: #a9a7b3;
-  --active-surface: #262019;
-  --active-border: #5a4a2e;
-  --active-icon: #ffb84d;
-  --active-text: #ffd9a0;
-  --accent: #ffb84d;
+@import "tailwindcss";
 
-  --radius-card: 22px;
-  --radius-tile: 17px;
-  --radius-icon: 11px;
+@theme {
+  --font-display: "Plus Jakarta Sans Variable", system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
 
-  --font: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
-    sans-serif;
+  --color-bg: #0e0f13;
+  --color-surface: rgba(36, 40, 50, 0.5);
+  --color-elevated: rgba(40, 44, 54, 0.55);
+  --color-border: rgba(255, 255, 255, 0.10);
+  --color-text: #f4f5f7;
+  --color-muted: rgba(235, 238, 245, 0.62);
+  --color-frost: #f6f7f9;
+  --color-frost-text: #15161a;
+  --color-frost-muted: #565a66;
+  --color-danger: #ff8a8a;
 
-  color-scheme: dark;
+  --radius-tile: 24px;
+  --radius-chip: 13px;
+  --radius-pill: 16px;
+
+  --blur-frost: 22px;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #f4f4f6;
-    --surface: #ffffff;
-    --border: #e9e9ee;
-    --text: #16161a;
-    --muted: #6b6b76;
-    --active-surface: #fff7ea;
-    --active-border: #f0d9ad;
-    --active-icon: #ff9f1c;
-    --active-text: #7a4e00;
-    --accent: #ff9f1c;
-    color-scheme: light;
+@layer base {
+  html, body, #root { height: 100%; margin: 0; }
+  body {
+    font-family: var(--font-display);
+    color: var(--color-text);
+    background:
+      radial-gradient(130% 90% at 75% -10%, #3b4a63 0%, rgba(59,74,99,0) 55%),
+      radial-gradient(120% 90% at 0% 110%, #4a3b30 0%, rgba(74,59,48,0) 50%),
+      linear-gradient(180deg, #1a1e26 0%, #15161c 60%, #1b1812 100%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
   }
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html,
-body,
-#root {
-  margin: 0;
-  height: 100%;
-}
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font);
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Respect users who prefer reduced motion. */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
   }
 }

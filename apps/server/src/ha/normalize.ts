@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   Area,
   Device,
   EntityState,
@@ -33,6 +33,10 @@ export interface RawRegistryEntry {
   name: string | null;
   original_name?: string | null;
   platform: string;
+  entity_category?: 'config' | 'diagnostic' | null;
+  hidden_by?: string | null;
+  disabled_by?: string | null;
+  device_class?: string | null;
 }
 
 export function normalizeEntity(raw: RawHassEntity): EntityState {
@@ -64,5 +68,9 @@ export function normalizeRegistryEntry(raw: RawRegistryEntry): RegistryEntry {
     areaId: raw.area_id,
     name: raw.name ?? raw.original_name ?? null,
     platform: raw.platform,
+    entityCategory: raw.entity_category ?? null,
+    hidden: raw.hidden_by != null,
+    disabled: raw.disabled_by != null,
+    deviceClass: raw.device_class ?? null,
   };
 }

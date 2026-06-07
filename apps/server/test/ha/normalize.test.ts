@@ -64,7 +64,7 @@ describe('normalizeDevice', () => {
 });
 
 describe('normalizeRegistryEntry', () => {
-  it('prefers name over original_name', () => {
+  it('maps name (preferred), category, hidden/disabled, device_class', () => {
     expect(
       normalizeRegistryEntry({
         entity_id: 'light.kitchen',
@@ -73,6 +73,10 @@ describe('normalizeRegistryEntry', () => {
         name: 'My Light',
         original_name: 'Light',
         platform: 'hue',
+        entity_category: null,
+        hidden_by: null,
+        disabled_by: null,
+        device_class: null,
       }),
     ).toEqual({
       entityId: 'light.kitchen',
@@ -80,18 +84,30 @@ describe('normalizeRegistryEntry', () => {
       areaId: null,
       name: 'My Light',
       platform: 'hue',
+      entityCategory: null,
+      hidden: false,
+      disabled: false,
+      deviceClass: null,
     });
   });
 
-  it('falls back to original_name when name is null', () => {
+  it('falls back to original_name and maps diagnostic/hidden/device_class', () => {
     const r = normalizeRegistryEntry({
-      entity_id: 'light.x',
-      device_id: null,
+      entity_id: 'sensor.x_battery',
+      device_id: 'dev2',
       area_id: 'kitchen',
       name: null,
-      original_name: 'Original',
+      original_name: 'Battery',
       platform: 'hue',
+      entity_category: 'diagnostic',
+      hidden_by: 'user',
+      disabled_by: null,
+      device_class: 'battery',
     });
-    expect(r.name).toBe('Original');
+    expect(r.name).toBe('Battery');
+    expect(r.entityCategory).toBe('diagnostic');
+    expect(r.hidden).toBe(true);
+    expect(r.disabled).toBe(false);
+    expect(r.deviceClass).toBe('battery');
   });
 });

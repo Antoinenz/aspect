@@ -23,6 +23,8 @@ export interface Device {
   areaId: string | null;
 }
 
+export type EntityCategory = 'config' | 'diagnostic';
+
 /** A Home Assistant entity-registry entry (links an entity to a device/area). */
 export interface RegistryEntry {
   entityId: string;
@@ -31,6 +33,14 @@ export interface RegistryEntry {
   /** User-given or original friendly name, if any. */
   name: string | null;
   platform: string;
+  /** 'config'/'diagnostic' entities are hidden from the main views. */
+  entityCategory: EntityCategory | null;
+  /** True if HA marks the entity hidden. */
+  hidden: boolean;
+  /** True if HA marks the entity disabled. */
+  disabled: boolean;
+  /** e.g. 'battery', 'temperature', 'motion' — drives icons & battery grouping. */
+  deviceClass: string | null;
 }
 
 /** The full cached world the server knows about. */

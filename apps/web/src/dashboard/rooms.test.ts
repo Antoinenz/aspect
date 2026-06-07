@@ -14,7 +14,17 @@ const reg = (
   areaId: string | null,
   deviceId: string | null = null,
   name: string | null = null,
-): RegistryEntry => ({ entityId, areaId, deviceId, name, platform: 'demo' });
+): RegistryEntry => ({
+  entityId,
+  areaId,
+  deviceId,
+  name,
+  platform: 'demo',
+  entityCategory: null,
+  hidden: false,
+  disabled: false,
+  deviceClass: null,
+});
 
 describe('buildRooms', () => {
   it('groups entities by their registry area, sorted by area then name', () => {

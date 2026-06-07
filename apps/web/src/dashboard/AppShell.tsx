@@ -36,7 +36,7 @@ export function AppShell(): ReactElement {
   return (
     <main className="mx-auto min-h-[100dvh] max-w-[1100px] px-5 pb-10 pt-[calc(24px+env(safe-area-inset-top))]">
       <Tabs items={tabs} value={tab} onValueChange={setTab}>
-        <TabPanel value="__summary__"><SummaryTab /></TabPanel>
+        <TabPanel value="__summary__"><SummaryTab onSelect={(id) => setSelectedId(id)} /></TabPanel>
         <TabPanel value="__quick__"><QuickAccessTab /></TabPanel>
         {rooms.map((room) => (
           <TabPanel key={room.areaId} value={room.areaId}>

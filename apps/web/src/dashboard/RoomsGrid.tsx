@@ -25,10 +25,10 @@ export function RoomsOverview({ rooms, onOpen }: { rooms: Room[]; onOpen: (areaI
                 type="button"
                 onClick={() => onOpen(s.areaId)}
                 className={[
-                  'card-enter flex min-h-[108px] flex-col rounded-[20px] border p-4 text-left backdrop-blur-[22px] transition-transform duration-100 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
+                  'card-enter flex min-h-[120px] flex-col rounded-[20px] border p-4 text-left backdrop-blur-[22px] transition-[transform,background-color] duration-150 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
                   active
-                    ? 'border-white/50 bg-[#f6f7f9]/95 text-[#15161a]'
-                    : 'border-white/10 bg-[rgba(36,40,50,0.5)] backdrop-saturate-[1.3]',
+                    ? 'border-white/50 bg-[#f6f7f9]/95 text-[#15161a] hover:bg-[#edeef1]/95'
+                    : 'border-white/10 bg-[rgba(36,40,50,0.5)] backdrop-saturate-[1.3] hover:bg-[rgba(48,54,66,0.65)]',
                 ].join(' ')}
                 style={{ cornerShape: `superellipse(${SQUIRCLE})`, animationDelay: `${i * 45}ms` } as React.CSSProperties}
               >
@@ -40,7 +40,7 @@ export function RoomsOverview({ rooms, onOpen }: { rooms: Room[]; onOpen: (areaI
                 </span>
                 <span className="mt-auto text-[14px] font-bold tracking-[-0.2px]">{s.name}</span>
                 <span className={`mt-0.5 text-[12px] font-medium ${active ? 'text-[#565a66]' : 'text-[var(--color-muted)]'}`}>
-                  {active ? <span className="text-[#c97a00]">{s.onCount} on</span> : 'All off'} · {s.deviceCount} devices
+                  {active ? <span className="font-semibold">{s.onCount} on</span> : 'All off'} · {s.deviceCount} devices
                 </span>
               </button>
             );

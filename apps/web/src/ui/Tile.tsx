@@ -29,11 +29,11 @@ export function Tile({
     <motion.div
       className={[
         'relative flex min-h-[120px] flex-col',
-        'border backdrop-blur-[22px]',
+        'border backdrop-blur-[22px] transition-colors duration-150',
         wide ? 'col-span-2' : '',
         active
-          ? 'bg-[#f6f7f9]/95 border-white/50 text-[#15161a]'
-          : 'bg-[rgba(36,40,50,0.5)] border-white/10 text-[var(--color-text)] backdrop-saturate-[1.3]',
+          ? 'bg-[#f6f7f9]/95 border-white/50 text-[#15161a] hover:bg-[#edeef1]/95'
+          : 'bg-[rgba(36,40,50,0.5)] border-white/10 text-[var(--color-text)] backdrop-saturate-[1.3] hover:bg-[rgba(48,54,66,0.65)]',
       ].join(' ')}
       style={sq}
       whileTap={{ scale: 0.97 }}

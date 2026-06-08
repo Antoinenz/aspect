@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import { motion } from 'motion/react';
 import { Icon } from '../ui/Icon.js';
 import { NAV_ITEMS, SETTINGS_ITEM, type Section, type NavDestination } from './navItems.js';
 import { SQUIRCLE } from '../ui/tokens.js';
@@ -10,13 +11,23 @@ function NavButton({ item, active, onClick }: { item: NavDestination; active: bo
       onClick={onClick}
       aria-current={active ? 'page' : undefined}
       className={[
-        'flex items-center gap-3 rounded-[13px] px-3.5 py-2.5 text-[14px] font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
-        active ? 'bg-[var(--color-frost)] text-[var(--color-frost-text)]' : 'text-[var(--color-muted)] hover:bg-white/5 hover:text-[var(--color-text)]',
+        'relative flex items-center gap-3 rounded-[13px] px-3.5 py-2.5 text-[14px] font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
+        active ? 'text-[var(--color-frost-text)]' : 'text-[var(--color-muted)] hover:bg-white/5 hover:text-[var(--color-text)]',
       ].join(' ')}
       style={{ cornerShape: `superellipse(${SQUIRCLE})` } as React.CSSProperties}
     >
-      <Icon path={item.icon} size={20} />
-      {item.label}
+      {active && (
+        <motion.span
+          layoutId="sidebar-active"
+          className="absolute inset-0 bg-[var(--color-frost)]"
+          style={{ borderRadius: '13px', cornerShape: `superellipse(${SQUIRCLE})` } as React.CSSProperties}
+          transition={{ type: 'spring', stiffness: 420, damping: 36 }}
+        />
+      )}
+      <span className="relative z-10 flex items-center gap-3">
+        <Icon path={item.icon} size={20} />
+        {item.label}
+      </span>
     </button>
   );
 }

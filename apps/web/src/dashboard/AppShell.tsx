@@ -1,4 +1,5 @@
 import { useMemo, useState, useCallback, type ReactElement } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useConnectionStore } from '../store/connectionStore.js';
 import { Nav } from '../nav/Nav.js';
 import type { Section } from '../nav/navItems.js';
@@ -36,15 +37,25 @@ export function AppShell(): ReactElement {
       <Nav section={section} onNavigate={navigate} />
       <main className="flex-1 overflow-x-hidden px-5 pb-24 pt-[calc(24px+env(safe-area-inset-top))] md:px-8 md:pb-10">
         <div className="mx-auto max-w-[1100px]">
-          {section === 'home' && <SummaryTab onSelect={openEntity} />}
-          {section === 'favorites' && <QuickAccessTab onSelect={openEntity} />}
-          {section === 'rooms' && (
-            openRoom
-              ? <RoomView room={openRoom} onBack={() => setRoomId(null)} onSelect={(re) => openEntity(re.entity.entityId)} />
-              : <RoomsOverview rooms={rooms} onOpen={(areaId) => setRoomId(areaId)} />
-          )}
-          {section === 'map' && <MapPage />}
-          {section === 'settings' && <SettingsPage />}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={section + (roomId ?? '')}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+            >
+              {section === 'home' && <SummaryTab onSelect={openEntity} />}
+              {section === 'favorites' && <QuickAccessTab onSelect={openEntity} />}
+              {section === 'rooms' && (
+                openRoom
+                  ? <RoomView room={openRoom} onBack={() => setRoomId(null)} onSelect={(re) => openEntity(re.entity.entityId)} />
+                  : <RoomsOverview rooms={rooms} onOpen={(areaId) => setRoomId(areaId)} />
+              )}
+              {section === 'map' && <MapPage />}
+              {section === 'settings' && <SettingsPage />}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
       <EntityDetailSheet entityId={selectedId} onClose={closeSheet} />

@@ -79,9 +79,11 @@
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
   }
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
-  }
+  /*
+   * Aspect intentionally always plays its (subtle) animations rather than
+   * honoring `prefers-reduced-motion`, per product decision. If end-user
+   * control is needed later, gate this behind a Settings "Motion" toggle.
+   */
 }
 
 /*
@@ -91,8 +93,8 @@
  * the element's own styles after, leaving :active transforms free to work.
  */
 @keyframes aspect-section-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes aspect-card-in {
   from { opacity: 0; transform: translateY(12px) scale(0.98); }

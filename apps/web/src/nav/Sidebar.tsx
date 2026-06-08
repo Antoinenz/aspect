@@ -34,7 +34,7 @@ function NavButton({ item, active, onClick }: { item: NavDestination; active: bo
 
 export function Sidebar({ section, onNavigate }: { section: Section; onNavigate: (s: Section) => void }): ReactElement {
   return (
-    <aside className="hidden w-[226px] flex-none flex-col gap-1 border-r border-white/7 bg-[rgba(20,22,28,0.5)] p-3.5 backdrop-blur-[20px] md:flex">
+    <aside className="hidden h-full w-[226px] flex-none flex-col gap-1 border-r border-white/7 bg-[rgba(20,22,28,0.5)] p-3.5 backdrop-blur-[20px] md:flex">
       <div className="flex items-center gap-3 px-2 pb-4 pt-1.5">
         <img src="/logo.svg" alt="" className="h-8 w-8" />
         <b className="text-[18px] font-extrabold tracking-[-0.4px]">Aspect</b>

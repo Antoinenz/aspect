@@ -33,9 +33,9 @@ export function AppShell(): ReactElement {
   const openRoom = rooms.find((r) => r.areaId === roomId) ?? null;
 
   return (
-    <div className="flex min-h-dvh">
+    <div className="flex h-dvh overflow-hidden">
       <Nav section={section} onNavigate={navigate} />
-      <main className="flex-1 overflow-x-hidden px-5 pb-24 pt-[calc(24px+env(safe-area-inset-top))] md:px-8 md:pb-10">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden px-5 pb-24 pt-[calc(24px+env(safe-area-inset-top))] md:px-8 md:pb-10">
         <div className="mx-auto max-w-[1100px]">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div

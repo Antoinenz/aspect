@@ -7,11 +7,17 @@ import { useConnectionStore } from '../store/connectionStore.js';
 import { Tile } from '../ui/Tile.js';
 import { Icon } from '../ui/Icon.js';
 import { iconFor, tintFor } from '../domain/icons.js';
+import { roomIcon } from './roomIcon.js';
 import { formatState, isActive, friendlyName, domainOf } from '../domain/entities.js';
 import { tileAction } from '../domain/tileAction.js';
 import { setFavorite, reorderFavorites } from '../server-client/commands.js';
+import { useRoomFavourites } from './roomFavouritesStore.js';
+import { roomsOverview } from './roomStats.js';
 import type { EntityState } from '@aspect/shared';
+import type { Room } from './rooms.js';
 import { SQUIRCLE } from '../ui/tokens.js';
+
+const sectionLabel = 'text-[12px] font-bold uppercase tracking-[0.6px] text-[var(--color-muted)]';
 
 function SortableTile({
   entity, index, onRemove,
@@ -60,12 +66,21 @@ function SortableTile({
   );
 }
 
-export function QuickAccessTab({ onSelect }: { onSelect: (entityId: string) => void }): ReactElement {
+export function QuickAccessTab({
+  rooms, onSelect, onSelectRoom,
+}: {
+  rooms: Room[];
+  onSelect: (entityId: string) => void;
+  onSelectRoom: (areaId: string) => void;
+}): ReactElement {
   const favorites = useConnectionStore((s) => s.favorites);
   const entities = useConnectionStore((s) => s.entities);
   const optimistic = useConnectionStore((s) => s.applyOptimistic);
   const [editing, setEditing] = useState(false);
   const [order, setOrder] = useState<string[]>([]);
+
+  const favRooms = useRoomFavourites((s) => s.favRooms);
+  const favRoomStats = roomsOverview(rooms.filter((r) => favRooms.has(r.areaId)));
 
   const tiles = favorites
     .map((id) => entities[id])
@@ -103,7 +118,8 @@ export function QuickAccessTab({ onSelect }: { onSelect: (entityId: string) => v
     }
   }
 
-  if (tiles.length === 0 && !editing) {
+  const isEmpty = tiles.length === 0 && favRoomStats.length === 0 && !editing;
+  if (isEmpty) {
     return (
       <div className="flex h-[60vh] flex-col items-center justify-center gap-2 text-center">
         <h1 className="m-0 text-[26px] font-extrabold tracking-[-0.5px]">Favourites</h1>
@@ -113,6 +129,8 @@ export function QuickAccessTab({ onSelect }: { onSelect: (entityId: string) => v
       </div>
     );
   }
+
+  const chipClass = 'flex items-center gap-1.5 rounded-[13px] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-[13px] font-semibold text-[var(--color-muted)] backdrop-blur-[var(--blur-frost)] hover:text-[var(--color-text)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40';
 
   const header = (
     <div className="mb-5 flex items-center justify-between">
@@ -139,7 +157,7 @@ export function QuickAccessTab({ onSelect }: { onSelect: (entityId: string) => v
           type="button"
           onClick={startEdit}
           aria-label="Edit favorites"
-          className="flex items-center gap-1.5 rounded-[13px] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-[13px] font-semibold text-[var(--color-muted)] backdrop-blur-[var(--blur-frost)] hover:text-[var(--color-text)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+          className={chipClass}
           style={{ cornerShape: `superellipse(${SQUIRCLE})` } as React.CSSProperties}
         >
           <Icon path={mdiPencilOutline} size={16} />
@@ -176,23 +194,47 @@ export function QuickAccessTab({ onSelect }: { onSelect: (entityId: string) => v
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-7">
       {header}
-      <div className="grid gap-[13px] [grid-template-columns:repeat(auto-fill,minmax(150px,1fr))]">
-        {tiles.map((entity) => (
-          <Tile
-            key={entity.entityId}
-            path={iconFor(entity)}
-            tint={tintFor(domainOf(entity.entityId))}
-            name={friendlyName(entity, null)}
-            state={formatState(entity)}
-            active={isActive(entity)}
-            wide={domainOf(entity.entityId) === 'climate' || domainOf(entity.entityId) === 'media_player'}
-            onAction={tileAction(entity, optimistic)}
-            onPress={() => onSelect(entity.entityId)}
-          />
-        ))}
-      </div>
+      {favRoomStats.length > 0 && (
+        <section>
+          {tiles.length > 0 && <h2 className={`m-0 mb-3 ${sectionLabel}`}>Rooms</h2>}
+          <div className="grid gap-[13px] [grid-template-columns:repeat(auto-fill,minmax(150px,1fr))]">
+            {favRoomStats.map((s) => (
+              <Tile
+                key={s.areaId}
+                path={roomIcon(s.name)}
+                tint={null}
+                name={s.name}
+                state={s.onCount > 0 ? `${s.onCount} on` : 'All off'}
+                active={s.onCount > 0}
+                onPress={() => onSelectRoom(s.areaId)}
+                onAction={null}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+      {tiles.length > 0 && (
+        <section>
+          {favRoomStats.length > 0 && <h2 className={`m-0 mb-3 ${sectionLabel}`}>Devices</h2>}
+          <div className="grid gap-[13px] [grid-template-columns:repeat(auto-fill,minmax(150px,1fr))]">
+            {tiles.map((entity) => (
+              <Tile
+                key={entity.entityId}
+                path={iconFor(entity)}
+                tint={tintFor(domainOf(entity.entityId))}
+                name={friendlyName(entity, null)}
+                state={formatState(entity)}
+                active={isActive(entity)}
+                wide={domainOf(entity.entityId) === 'climate' || domainOf(entity.entityId) === 'media_player'}
+                onAction={tileAction(entity, optimistic)}
+                onPress={() => onSelect(entity.entityId)}
+              />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

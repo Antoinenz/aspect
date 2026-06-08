@@ -8,6 +8,7 @@ import { tileAction } from '../domain/tileAction.js';
 import { callService } from '../server-client/commands.js';
 import { useConnectionStore } from '../store/connectionStore.js';
 import { useRoomFavourites } from './roomFavouritesStore.js';
+import { SQUIRCLE } from '../ui/tokens.js';
 import type { Room, RoomEntity } from './rooms.js';
 
 export interface RoomTabProps {
@@ -110,7 +111,7 @@ export function RoomTab({ room, onBack, onSelect }: RoomTabProps): ReactElement 
     for (const re of controllable) callService(re.domain, svc, re.entity.entityId);
   }
 
-  const chipClass = 'flex items-center gap-1.5 rounded-[11px] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-[12.5px] font-semibold text-[var(--color-muted)] backdrop-blur-[var(--blur-frost)] transition-colors hover:text-[var(--color-text)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40';
+  const chipClass = 'flex items-center gap-1.5 rounded-[13px] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-[13px] font-semibold text-[var(--color-muted)] backdrop-blur-[var(--blur-frost)] hover:text-[var(--color-text)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40';
 
   return (
     <div>
@@ -137,12 +138,12 @@ export function RoomTab({ room, onBack, onSelect }: RoomTabProps): ReactElement 
             </div>
           </div>
           <div className="flex shrink-0 gap-2 pt-1">
-            <button type="button" onClick={() => toggleFav(room.areaId)} className={chipClass}>
+            <button type="button" onClick={() => toggleFav(room.areaId)} className={chipClass} style={{ cornerShape: `superellipse(${SQUIRCLE})` } as React.CSSProperties}>
               <Icon path={isFav ? mdiStar : mdiStarOutline} size={15} color={isFav ? '#ffd27d' : undefined} />
               {isFav ? 'Favourited' : 'Favourite'}
             </button>
             {controllable.length > 0 && (
-              <button type="button" onClick={turnAll} className={chipClass}>
+              <button type="button" onClick={turnAll} className={chipClass} style={{ cornerShape: `superellipse(${SQUIRCLE})` } as React.CSSProperties}>
                 <Icon path={mdiPower} size={15} />
                 {anyActive ? 'Turn off' : 'Turn on'}
               </button>

@@ -9,11 +9,7 @@ import { SQUIRCLE } from '../ui/tokens.js';
 
 export function RoomsOverview({ rooms, onOpen }: { rooms: Room[]; onOpen: (areaId: string) => void }): ReactElement {
   const favRooms = useRoomFavourites((s) => s.favRooms);
-  const stats = roomsOverview(rooms).sort((a, b) => {
-    const fa = favRooms.has(a.areaId) ? 0 : 1;
-    const fb = favRooms.has(b.areaId) ? 0 : 1;
-    return fa - fb || a.name.localeCompare(b.name);
-  });
+  const stats = roomsOverview(rooms);
   return (
     <div>
       <h1 className="m-0 text-[26px] font-extrabold tracking-[-0.5px]">Rooms</h1>

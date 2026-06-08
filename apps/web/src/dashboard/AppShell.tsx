@@ -46,7 +46,13 @@ export function AppShell(): ReactElement {
         <div className="mx-auto max-w-[1100px]">
           <div key={section + (roomId ?? '')} className="section-enter">
             {section === 'home' && <SummaryTab onSelect={openEntity} />}
-            {section === 'favorites' && <QuickAccessTab onSelect={openEntity} />}
+            {section === 'favorites' && (
+              <QuickAccessTab
+                rooms={rooms}
+                onSelect={openEntity}
+                onSelectRoom={(areaId) => { setSection('rooms'); setRoomId(areaId); }}
+              />
+            )}
             {section === 'rooms' && (
               openRoom
                 ? <RoomView room={openRoom} onBack={() => setRoomId(null)} onSelect={(re) => openEntity(re.entity.entityId)} />

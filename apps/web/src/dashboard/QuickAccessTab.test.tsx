@@ -26,7 +26,7 @@ describe('QuickAccessTab', () => {
   });
 
   it('shows an empty state when there are no favorites', () => {
-    render(<QuickAccessTab onSelect={() => {}} />);
+    render(<QuickAccessTab rooms={[]} onSelect={() => {}} onSelectRoom={() => {}} />);
     expect(screen.getByText(/no favourites yet/i)).toBeInTheDocument();
   });
 
@@ -37,7 +37,7 @@ describe('QuickAccessTab', () => {
       entities: { 'light.kitchen_lamp': e('light.kitchen_lamp'), 'scene.movie': e('scene.movie') },
       favorites: ['light.kitchen_lamp'],
     });
-    render(<QuickAccessTab onSelect={onSelect} />);
+    render(<QuickAccessTab rooms={[]} onSelect={onSelect} onSelectRoom={() => {}} />);
     expect(screen.getByText('Kitchen Lamp')).toBeInTheDocument();
     expect(screen.queryByText('Movie')).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Kitchen Lamp' }));
@@ -50,7 +50,7 @@ describe('QuickAccessTab', () => {
       entities: { 'light.kitchen_lamp': e('light.kitchen_lamp') },
       favorites: ['light.kitchen_lamp'],
     });
-    render(<QuickAccessTab onSelect={() => {}} />);
+    render(<QuickAccessTab rooms={[]} onSelect={() => {}} onSelectRoom={() => {}} />);
     await userEvent.click(screen.getByRole('button', { name: /edit favorites/i }));
     expect(screen.getByRole('button', { name: /remove kitchen lamp/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /done/i })).toBeInTheDocument();
@@ -62,7 +62,7 @@ describe('QuickAccessTab', () => {
       entities: { 'light.kitchen_lamp': e('light.kitchen_lamp') },
       favorites: ['light.kitchen_lamp'],
     });
-    render(<QuickAccessTab onSelect={() => {}} />);
+    render(<QuickAccessTab rooms={[]} onSelect={() => {}} onSelectRoom={() => {}} />);
     await userEvent.click(screen.getByRole('button', { name: /edit favorites/i }));
     await userEvent.click(screen.getByRole('button', { name: /remove kitchen lamp/i }));
     expect(sent.some((s) => JSON.stringify(s) === JSON.stringify(['setFavorite', 'light.kitchen_lamp', false]))).toBe(true);
@@ -74,7 +74,7 @@ describe('QuickAccessTab', () => {
       entities: { 'light.kitchen_lamp': e('light.kitchen_lamp') },
       favorites: ['light.kitchen_lamp'],
     });
-    render(<QuickAccessTab onSelect={() => {}} />);
+    render(<QuickAccessTab rooms={[]} onSelect={() => {}} onSelectRoom={() => {}} />);
     await userEvent.click(screen.getByRole('button', { name: /edit favorites/i }));
     await userEvent.click(screen.getByRole('button', { name: /done/i }));
     expect(sent.some((s) => Array.isArray(s) && s[0] === 'reorderFavorites')).toBe(true);

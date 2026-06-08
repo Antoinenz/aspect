@@ -115,35 +115,39 @@ export function RoomTab({ room, onBack, onSelect }: RoomTabProps): ReactElement 
   return (
     <div>
       <header className="mb-6">
-        <h1 className="m-0 text-[26px] font-extrabold tracking-[-0.5px]">{room.name}</h1>
-        <div className="mt-0.5 flex items-center text-[12.5px] font-medium text-[var(--color-muted)]">
-          {onBack && (
-            <>
-              <button
-                type="button"
-                onClick={onBack}
-                className="flex items-center gap-0.5 rounded-[4px] transition-colors hover:text-[var(--color-text)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-              >
-                <Icon path={mdiChevronLeft} size={14} />
-                Rooms
-              </button>
-              <span className="mx-1.5">·</span>
-            </>
-          )}
-          {available.length} {available.length === 1 ? 'accessory' : 'accessories'} · {activeCount} active
-          {unavailable.length > 0 && ` · ${unavailable.length} unavailable`}
-        </div>
-        <div className="mt-3 flex gap-2">
-          {controllable.length > 0 && (
-            <button type="button" onClick={turnAll} className={chipClass}>
-              <Icon path={mdiPower} size={15} />
-              {anyActive ? 'Turn off' : 'Turn on'}
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="m-0 text-[26px] font-extrabold tracking-[-0.5px]">{room.name}</h1>
+            <div className="mt-0.5 flex items-center text-[12.5px] font-medium text-[var(--color-muted)]">
+              {onBack && (
+                <>
+                  <button
+                    type="button"
+                    onClick={onBack}
+                    className="flex items-center gap-0.5 rounded-[4px] transition-colors hover:text-[var(--color-text)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                  >
+                    <Icon path={mdiChevronLeft} size={14} />
+                    Rooms
+                  </button>
+                  <span className="mx-1.5">·</span>
+                </>
+              )}
+              {available.length} {available.length === 1 ? 'accessory' : 'accessories'} · {activeCount} active
+              {unavailable.length > 0 && ` · ${unavailable.length} unavailable`}
+            </div>
+          </div>
+          <div className="flex shrink-0 gap-2 pt-1">
+            <button type="button" onClick={() => toggleFav(room.areaId)} className={chipClass}>
+              <Icon path={isFav ? mdiStar : mdiStarOutline} size={15} color={isFav ? '#ffd27d' : undefined} />
+              {isFav ? 'Favourited' : 'Favourite'}
             </button>
-          )}
-          <button type="button" onClick={() => toggleFav(room.areaId)} className={chipClass}>
-            <Icon path={isFav ? mdiStar : mdiStarOutline} size={15} color={isFav ? '#ffd27d' : undefined} />
-            {isFav ? 'Favourited' : 'Favourite'}
-          </button>
+            {controllable.length > 0 && (
+              <button type="button" onClick={turnAll} className={chipClass}>
+                <Icon path={mdiPower} size={15} />
+                {anyActive ? 'Turn off' : 'Turn on'}
+              </button>
+            )}
+          </div>
         </div>
       </header>
       <div className="flex flex-col gap-7">

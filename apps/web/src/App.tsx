@@ -5,6 +5,7 @@ import { useConnectionStore } from './store/connectionStore.js';
 import { useDemoStore } from './demo/demoStore.js';
 import { AppShell } from './dashboard/AppShell.js';
 import { ErrorScreen } from './ui/ErrorScreen.js';
+import { LoadingShell } from './ui/LoadingShell.js';
 
 // Grace period before showing "server unreachable" — covers the initial
 // connecting phase so we don't flash the error on a normal page load.
@@ -38,11 +39,14 @@ export function App(): ReactElement {
 
   const showError = haOffline || (serverDown && serverTimedOut);
   const errorKind = haOffline ? 'ha' : 'server';
+  const isLoading = !demo && !showError && !haConnected;
 
   return (
     <AnimatePresence mode="wait">
       {showError ? (
         <ErrorScreen key={errorKind} kind={errorKind} />
+      ) : isLoading ? (
+        <LoadingShell key="loading" />
       ) : (
         <motion.div
           key="shell"

@@ -18,7 +18,11 @@ export function AppShell(): ReactElement {
   const registry = useConnectionStore((s) => s.registry);
   const rooms = useMemo(() => buildRooms(entities, areas, devices, registry), [entities, areas, devices, registry]);
 
-  const [section, setSection] = useState<Section>('home');
+  const [section, setSection] = useState<Section>(() => {
+    const saved = localStorage.getItem('aspect-startup-section') as Section | null;
+    const valid: Section[] = ['home', 'rooms', 'favorites', 'map', 'settings'];
+    return saved && valid.includes(saved) ? saved : 'home';
+  });
   const [roomId, setRoomId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const mainRef = useRef<HTMLElement>(null);

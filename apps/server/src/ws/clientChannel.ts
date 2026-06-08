@@ -57,6 +57,10 @@ export class ClientHub {
       this.favorites.set(parsed.entityId, parsed.favorite);
       this.broadcastFavorites();
     }
+    if (parsed.type === 'reorder_favorites') {
+      this.favorites.reorder(parsed.entityIds);
+      this.broadcastFavorites();
+    }
   }
 
   add(socket: WebSocket): void {

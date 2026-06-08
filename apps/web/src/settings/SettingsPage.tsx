@@ -1,14 +1,16 @@
-import { type ReactElement, type ReactNode } from 'react';
+import { type ReactElement, type ReactNode, useState } from 'react';
 import {
   mdiWeatherSunny, mdiWeatherNight, mdiThemeLightDark,
-  mdiCheckCircle, mdiSync, mdiAlertCircleOutline, mdiClose, mdiStarOutline,
+  mdiCheckCircle, mdiSync, mdiAlertCircleOutline,
+  mdiAnimationPlay, mdiHomeOutline, mdiStarOutline,
+  mdiViewGridOutline, mdiMapMarkerRadiusOutline,
 } from '@mdi/js';
 import { useConnectionStore } from '../store/connectionStore.js';
 import { useThemeStore, type ThemeChoice } from './theme.js';
-import { setFavorite } from '../server-client/commands.js';
-import { friendlyName } from '../domain/entities.js';
+import { useMotionStore, type MotionPref } from './motionStore.js';
 import { Icon } from '../ui/Icon.js';
 import { SQUIRCLE } from '../ui/tokens.js';
+import type { Section } from '../nav/navItems.js';
 
 const APP_VERSION = '0.1.0 (preview)';
 const PROJECT_URL = 'https://github.com/Antoinenz/aspect';
@@ -66,6 +68,96 @@ function ThemeCard(): ReactElement {
   );
 }
 
+function MotionCard(): ReactElement {
+  const motion = useMotionStore((s) => s.motion);
+  const setMotion = useMotionStore((s) => s.setMotion);
+
+  const MOTION_OPTIONS: { value: MotionPref; label: string; sub: string }[] = [
+    { value: 'on', label: 'Enabled', sub: 'Page slides, card entrances, sidebar pill' },
+    { value: 'off', label: 'Reduced', sub: 'No transitions or animations' },
+  ];
+
+  return (
+    <Card title="Motion">
+      <div className="flex flex-col gap-2">
+        {MOTION_OPTIONS.map((opt) => {
+          const active = motion === opt.value;
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => setMotion(opt.value)}
+              aria-pressed={active}
+              className={[
+                'flex items-center gap-3 px-3 py-2.5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
+                active
+                  ? 'bg-[var(--color-frost)] text-[var(--color-frost-text)]'
+                  : 'border border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-text)]',
+              ].join(' ')}
+              style={squircle(13)}
+            >
+              <Icon path={mdiAnimationPlay} size={20} color={active ? 'var(--color-frost-text)' : 'var(--color-muted)'} />
+              <span>
+                <span className="block text-[13.5px] font-semibold">{opt.label}</span>
+                <span className={['block text-[12px]', active ? 'text-[var(--color-frost-muted)]' : 'text-[var(--color-muted)]'].join(' ')}>{opt.sub}</span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </Card>
+  );
+}
+
+const STARTUP_OPTIONS: { value: Section; label: string; icon: string }[] = [
+  { value: 'home', label: 'Home', icon: mdiHomeOutline },
+  { value: 'favorites', label: 'Quick Access', icon: mdiStarOutline },
+  { value: 'rooms', label: 'Rooms', icon: mdiViewGridOutline },
+  { value: 'map', label: 'Map', icon: mdiMapMarkerRadiusOutline },
+];
+
+function StartupCard(): ReactElement {
+  const valid = STARTUP_OPTIONS.map((o) => o.value);
+  const [current, setCurrent] = useState<Section>(() => {
+    const saved = localStorage.getItem('aspect-startup-section') as Section | null;
+    return saved && valid.includes(saved) ? saved : 'home';
+  });
+
+  function pick(value: Section): void {
+    localStorage.setItem('aspect-startup-section', value);
+    setCurrent(value);
+  }
+
+  return (
+    <Card title="Startup">
+      <p className="m-0 mb-2.5 text-[12.5px] text-[var(--color-muted)]">Tab shown when you open Aspect</p>
+      <div className="grid grid-cols-2 gap-2">
+        {STARTUP_OPTIONS.map((opt) => {
+          const active = current === opt.value;
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => pick(opt.value)}
+              aria-pressed={active}
+              className={[
+                'flex items-center gap-2 px-3 py-2.5 text-[13.5px] font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
+                active
+                  ? 'bg-[var(--color-frost)] text-[var(--color-frost-text)]'
+                  : 'border border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-text)]',
+              ].join(' ')}
+              style={squircle(13)}
+            >
+              <Icon path={opt.icon} size={18} color={active ? 'var(--color-frost-text)' : 'var(--color-muted)'} />
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
+    </Card>
+  );
+}
+
 function ConnectionCard(): ReactElement {
   const link = useConnectionStore((s) => s.link);
   const haConnected = useConnectionStore((s) => s.haConnected);
@@ -97,50 +189,6 @@ function ConnectionCard(): ReactElement {
   );
 }
 
-function FavoritesCard(): ReactElement {
-  const favorites = useConnectionStore((s) => s.favorites);
-  const entities = useConnectionStore((s) => s.entities);
-
-  if (favorites.length === 0) {
-    return (
-      <Card title="Favorites">
-        <p className="m-0 flex items-center gap-2 text-[14px] text-[var(--color-muted)]">
-          <Icon path={mdiStarOutline} size={18} />
-          No favorites yet — pin devices from their detail view.
-        </p>
-      </Card>
-    );
-  }
-
-  return (
-    <Card title="Favorites">
-      <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
-        {favorites.map((id) => {
-          const entity = entities[id];
-          const name = entity ? friendlyName(entity, null) : id;
-          return (
-            <li
-              key={id}
-              className="flex items-center justify-between border border-[var(--color-border)] bg-[var(--color-elevated)] py-2 pl-3 pr-2"
-              style={squircle(12)}
-            >
-              <span className="truncate text-[14px] font-semibold">{name}</span>
-              <button
-                type="button"
-                onClick={() => setFavorite(id, false)}
-                aria-label={`Remove ${name} from favorites`}
-                className="flex flex-none items-center justify-center rounded-full p-1.5 text-[var(--color-muted)] hover:bg-white/10 hover:text-[var(--color-text)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-              >
-                <Icon path={mdiClose} size={18} />
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-    </Card>
-  );
-}
-
 function AboutCard(): ReactElement {
   return (
     <Card title="About">
@@ -168,8 +216,9 @@ export function SettingsPage(): ReactElement {
       <h1 className="m-0 mb-5 text-[26px] font-extrabold tracking-[-0.5px]">Settings</h1>
       <div className="flex flex-col gap-3.5">
         <ThemeCard />
+        <MotionCard />
+        <StartupCard />
         <ConnectionCard />
-        <FavoritesCard />
         <AboutCard />
       </div>
     </div>

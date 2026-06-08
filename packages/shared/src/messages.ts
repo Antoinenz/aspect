@@ -78,11 +78,18 @@ export interface SetFavoriteMessage {
   favorite: boolean;
 }
 
+/** Sets the display order of all favorites; replaces the previous order. */
+export interface ReorderFavoritesMessage {
+  type: 'reorder_favorites';
+  entityIds: string[];
+}
+
 /** Union of every message a client can send to the server. */
 export type ClientToServerMessage =
   | HelloMessage
   | CallServiceMessage
-  | SetFavoriteMessage;
+  | SetFavoriteMessage
+  | ReorderFavoritesMessage;
 
 export function createCallServiceMessage(
   domain: string,
@@ -118,6 +125,8 @@ export function isClientToServerMessage(
       );
     case 'set_favorite':
       return typeof c.entityId === 'string' && typeof c.favorite === 'boolean';
+    case 'reorder_favorites':
+      return Array.isArray(c.entityIds) && (c.entityIds as unknown[]).every((id) => typeof id === 'string');
     default:
       return false;
   }
@@ -148,6 +157,10 @@ export function createEntityUpdateMessage(
 
 export function createFavoritesMessage(entityIds: string[]): FavoritesMessage {
   return { type: 'favorites', entityIds };
+}
+
+export function createReorderFavoritesMessage(entityIds: string[]): ReorderFavoritesMessage {
+  return { type: 'reorder_favorites', entityIds };
 }
 
 export function isServerToClientMessage(

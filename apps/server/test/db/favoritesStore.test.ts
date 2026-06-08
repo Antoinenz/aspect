@@ -14,12 +14,21 @@ describe('FavoritesStore', () => {
     expect(store.list()).toEqual([]);
   });
 
-  it('adds, lists sorted, and is idempotent', () => {
+  it('adds in insertion order and is idempotent', () => {
     store = new FavoritesStore(':memory:');
     store.set('light.b', true);
     store.set('light.a', true);
-    store.set('light.a', true); // idempotent
-    expect(store.list()).toEqual(['light.a', 'light.b']);
+    store.set('light.a', true); // idempotent — does not change order
+    expect(store.list()).toEqual(['light.b', 'light.a']);
+  });
+
+  it('reorders favorites', () => {
+    store = new FavoritesStore(':memory:');
+    store.set('light.a', true);
+    store.set('light.b', true);
+    store.set('light.c', true);
+    store.reorder(['light.c', 'light.a', 'light.b']);
+    expect(store.list()).toEqual(['light.c', 'light.a', 'light.b']);
   });
 
   it('removes a favorite', () => {

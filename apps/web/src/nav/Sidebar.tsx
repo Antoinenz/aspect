@@ -11,7 +11,7 @@ function NavButton({ item, active, onClick }: { item: NavDestination; active: bo
       aria-current={active ? 'page' : undefined}
       className={[
         'flex items-center gap-3 rounded-[13px] px-3.5 py-2.5 text-[14px] font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
-        active ? 'bg-[#f3f4f6] text-[#15161a]' : 'text-[var(--color-muted)] hover:bg-white/5 hover:text-[var(--color-text)]',
+        active ? 'bg-[var(--color-frost)] text-[var(--color-frost-text)]' : 'text-[var(--color-muted)] hover:bg-white/5 hover:text-[var(--color-text)]',
       ].join(' ')}
       style={{ cornerShape: `superellipse(${SQUIRCLE})` } as React.CSSProperties}
     >

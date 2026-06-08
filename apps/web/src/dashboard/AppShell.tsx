@@ -8,6 +8,7 @@ import { QuickAccessTab } from './QuickAccessTab.js';
 import { RoomsOverview } from './RoomsGrid.js';
 import { RoomView } from './RoomView.js';
 import { EntityDetailSheet } from './EntityDetailSheet.js';
+import { SettingsPage } from '../settings/SettingsPage.js';
 
 function Placeholder({ text }: { text: string }): ReactElement {
   return <p className="text-[15px] text-[var(--color-muted)]">{text}</p>;
@@ -46,7 +47,7 @@ export function AppShell(): ReactElement {
               : <RoomsOverview rooms={rooms} onOpen={(areaId) => setRoomId(areaId)} />
           )}
           {section === 'map' && <Placeholder text="Map is coming soon." />}
-          {section === 'settings' && <Placeholder text="Settings are coming soon." />}
+          {section === 'settings' && <SettingsPage />}
         </div>
       </main>
       <EntityDetailSheet entityId={selectedId} onClose={closeSheet} />

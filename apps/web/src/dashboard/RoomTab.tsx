@@ -1,5 +1,5 @@
 import { type ReactElement, useState } from 'react';
-import { mdiChevronRight } from '@mdi/js';
+import { mdiChevronLeft, mdiChevronRight } from '@mdi/js';
 import { Tile } from '../ui/Tile.js';
 import { Icon } from '../ui/Icon.js';
 import { formatState, isActive, domainOf } from '../domain/entities.js';
@@ -10,6 +10,7 @@ import type { Room, RoomEntity } from './rooms.js';
 
 export interface RoomTabProps {
   room: Room;
+  onBack?: () => void;
   onSelect: (entity: RoomEntity) => void;
 }
 
@@ -74,7 +75,7 @@ function UnavailableSection({ entities, onSelect }: { entities: RoomEntity[]; on
   );
 }
 
-export function RoomTab({ room, onSelect }: RoomTabProps): ReactElement {
+export function RoomTab({ room, onBack, onSelect }: RoomTabProps): ReactElement {
   const available = room.entities.filter((re) => re.entity.state !== 'unavailable');
   const unavailable = room.entities.filter((re) => re.entity.state === 'unavailable');
 
@@ -98,7 +99,19 @@ export function RoomTab({ room, onSelect }: RoomTabProps): ReactElement {
   return (
     <div>
       <header className="mb-6">
-        <h1 className="m-0 text-[26px] font-extrabold tracking-[-0.5px]">{room.name}</h1>
+        <div className="flex items-center gap-2.5">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="flex shrink-0 items-center gap-0.5 rounded-[6px] text-[var(--color-muted)] transition-colors hover:text-[var(--color-text)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+            >
+              <Icon path={mdiChevronLeft} size={20} />
+              <span className="text-[14px] font-semibold">Rooms</span>
+            </button>
+          )}
+          <h1 className="m-0 truncate text-[26px] font-extrabold tracking-[-0.5px]">{room.name}</h1>
+        </div>
         <p className="mt-0.5 text-[12.5px] font-medium text-[var(--color-muted)]">
           {available.length} {available.length === 1 ? 'accessory' : 'accessories'} · {activeCount} active
           {unavailable.length > 0 && ` · ${unavailable.length} unavailable`}

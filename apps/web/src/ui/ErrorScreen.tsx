@@ -52,14 +52,6 @@ export function ErrorScreen({ kind }: { kind: 'server' | 'ha' }): ReactElement {
       </motion.div>
 
       <motion.div variants={item} className="flex flex-col items-center gap-3">
-        <div className="flex items-center gap-2 text-[13px] text-[rgba(255,255,255,0.35)]">
-          <span className="relative flex h-2 w-2 shrink-0">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/40" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-white/40" />
-          </span>
-          Retrying…
-        </div>
-
         {!isServer && (
           <button
             type="button"
@@ -71,6 +63,14 @@ export function ErrorScreen({ kind }: { kind: 'server' | 'ha' }): ReactElement {
             Try demo mode
           </button>
         )}
+
+        <div className="flex items-center gap-2 text-[13px] text-[rgba(255,255,255,0.35)]">
+          <span className="relative flex h-2 w-2 shrink-0">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/40" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-white/40" />
+          </span>
+          Retrying…
+        </div>
       </motion.div>
     </motion.div>
   );

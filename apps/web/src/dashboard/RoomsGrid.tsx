@@ -17,23 +17,34 @@ export function RoomsOverview({ rooms, onOpen }: { rooms: Room[]; onOpen: (areaI
         <p className="text-[15px] text-[var(--color-muted)]">No rooms to show yet.</p>
       ) : (
         <div className="grid gap-[14px] [grid-template-columns:repeat(auto-fill,minmax(180px,1fr))]">
-          {stats.map((s, i) => (
-            <button
-              key={s.areaId}
-              type="button"
-              onClick={() => onOpen(s.areaId)}
-              className="card-enter flex min-h-[108px] flex-col rounded-[20px] border border-white/10 bg-[rgba(36,40,50,0.5)] p-4 text-left backdrop-blur-[22px] backdrop-saturate-[1.3] transition-transform duration-100 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-              style={{ cornerShape: `superellipse(${SQUIRCLE})`, animationDelay: `${i * 45}ms` } as React.CSSProperties}
-            >
-              <span className="flex h-[42px] w-[42px] items-center justify-center rounded-[13px] bg-white/10" style={{ cornerShape: `superellipse(${SQUIRCLE})` } as React.CSSProperties}>
-                <Icon path={roomIcon(s.name)} size={22} color="#cfd3db" />
-              </span>
-              <span className="mt-auto text-[14px] font-bold tracking-[-0.2px]">{s.name}</span>
-              <span className="mt-0.5 text-[12px] font-medium text-[var(--color-muted)]">
-                {s.onCount > 0 ? <span className="text-[#ffd27d]">{s.onCount} on</span> : 'All off'} · {s.deviceCount} devices
-              </span>
-            </button>
-          ))}
+          {stats.map((s, i) => {
+            const active = s.onCount > 0;
+            return (
+              <button
+                key={s.areaId}
+                type="button"
+                onClick={() => onOpen(s.areaId)}
+                className={[
+                  'card-enter flex min-h-[108px] flex-col rounded-[20px] border p-4 text-left backdrop-blur-[22px] transition-transform duration-100 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
+                  active
+                    ? 'border-white/50 bg-[#f6f7f9]/95 text-[#15161a]'
+                    : 'border-white/10 bg-[rgba(36,40,50,0.5)] backdrop-saturate-[1.3]',
+                ].join(' ')}
+                style={{ cornerShape: `superellipse(${SQUIRCLE})`, animationDelay: `${i * 45}ms` } as React.CSSProperties}
+              >
+                <span
+                  className={`flex h-[42px] w-[42px] items-center justify-center rounded-[13px] ${active ? 'bg-[#191c24]' : 'bg-white/10'}`}
+                  style={{ cornerShape: `superellipse(${SQUIRCLE})` } as React.CSSProperties}
+                >
+                  <Icon path={roomIcon(s.name)} size={22} color={active ? '#fff' : '#cfd3db'} />
+                </span>
+                <span className="mt-auto text-[14px] font-bold tracking-[-0.2px]">{s.name}</span>
+                <span className={`mt-0.5 text-[12px] font-medium ${active ? 'text-[#565a66]' : 'text-[var(--color-muted)]'}`}>
+                  {active ? <span className="text-[#c97a00]">{s.onCount} on</span> : 'All off'} · {s.deviceCount} devices
+                </span>
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

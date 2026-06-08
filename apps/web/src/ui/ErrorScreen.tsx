@@ -25,7 +25,7 @@ export function ErrorScreen({ kind }: { kind: 'server' | 'ha' }): ReactElement {
 
   return (
     <motion.div
-      className="flex min-h-dvh flex-col items-center justify-center gap-6 px-6 text-center"
+      className="relative flex min-h-dvh flex-col items-center justify-center gap-6 px-6 text-center"
       style={{ background: 'radial-gradient(ellipse at 50% 25%, rgba(90,110,255,0.08) 0%, #0e0f13 60%)' }}
       variants={container}
       initial="hidden"
@@ -51,8 +51,19 @@ export function ErrorScreen({ kind }: { kind: 'server' | 'ha' }): ReactElement {
         </p>
       </motion.div>
 
-      <motion.div variants={item} className="flex flex-col items-center gap-3">
-        {!isServer && (
+      <motion.div variants={item} className="flex items-center gap-2 text-[13px] text-[rgba(255,255,255,0.35)]">
+        <span className="relative flex h-2 w-2 shrink-0">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/40" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-white/40" />
+        </span>
+        Retrying…
+      </motion.div>
+
+      {!isServer && (
+        <motion.div
+          variants={item}
+          className="absolute bottom-[max(32px,env(safe-area-inset-bottom))] left-0 right-0 flex justify-center px-6"
+        >
           <button
             type="button"
             onClick={() => setDemo(true)}
@@ -62,16 +73,8 @@ export function ErrorScreen({ kind }: { kind: 'server' | 'ha' }): ReactElement {
             <Icon path={mdiFlask} size={16} color="rgba(255,255,255,0.7)" />
             Try demo mode
           </button>
-        )}
-
-        <div className="flex items-center gap-2 text-[13px] text-[rgba(255,255,255,0.35)]">
-          <span className="relative flex h-2 w-2 shrink-0">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/40" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-white/40" />
-          </span>
-          Retrying…
-        </div>
-      </motion.div>
+        </motion.div>
+      )}
     </motion.div>
   );
 }

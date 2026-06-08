@@ -23,13 +23,13 @@ describe('EntityDetailSheet pin', () => {
 
   it('pins an unpinned entity', async () => {
     render(<EntityDetailSheet entityId="light.kitchen_lamp" onClose={() => {}} />);
-    await userEvent.click(await screen.findByRole('button', { name: /pin to quick/i }));
+    await userEvent.click(await screen.findByRole('button', { name: /favourite/i }));
     expect(sent[0]).toEqual(['light.kitchen_lamp', true]);
   });
 
   it('shows "Pinned" when already a favorite', async () => {
     useConnectionStore.setState({ ...base, favorites: ['light.kitchen_lamp'] });
     render(<EntityDetailSheet entityId="light.kitchen_lamp" onClose={() => {}} />);
-    expect(await screen.findByRole('button', { name: /pinned/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /favourited/i })).toBeInTheDocument();
   });
 });

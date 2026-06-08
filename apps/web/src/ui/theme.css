@@ -109,9 +109,19 @@
 .section-enter { animation: aspect-section-in 0.26s ease-out backwards; }
 .card-enter { animation: aspect-card-in 0.34s cubic-bezier(0.22, 0.61, 0.36, 1) backwards; }
 
+@keyframes tile-wiggle {
+  0%, 100% { transform: rotate(-1.5deg); }
+  50%       { transform: rotate(1.5deg); }
+}
+.tile-wiggle {
+  animation: tile-wiggle 0.22s ease-in-out infinite;
+  transform-origin: center center;
+}
+
 /* Settings > Motion toggle: off */
 :root[data-motion='reduced'] .section-enter,
-:root[data-motion='reduced'] .card-enter { animation: none; }
+:root[data-motion='reduced'] .card-enter,
+:root[data-motion='reduced'] .tile-wiggle { animation: none; }
 :root[data-motion='reduced'] * { transition-duration: 0.01ms !important; }
 
 /*

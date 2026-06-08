@@ -27,7 +27,7 @@ describe('QuickAccessTab', () => {
 
   it('shows an empty state when there are no favorites', () => {
     render(<QuickAccessTab onSelect={() => {}} />);
-    expect(screen.getByText(/no favorites yet/i)).toBeInTheDocument();
+    expect(screen.getByText(/no favourites yet/i)).toBeInTheDocument();
   });
 
   it('renders pinned favorites and opens one', async () => {
